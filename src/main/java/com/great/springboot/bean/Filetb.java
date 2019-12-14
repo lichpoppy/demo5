@@ -10,6 +10,7 @@ public class Filetb
 	public String filetype;
 	public String downtimes;
 	private int page;
+	45
 	public String introduction;
 
 
