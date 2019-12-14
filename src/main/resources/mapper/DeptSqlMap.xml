@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.great.springboot.dao.UserMapper">
+<resultMap id="Menu" type="Menu"></resultMap>
+
+     <select id="login" parameterType="tbUser" resultType="tbUser">
+       select * from tb_user where username = #{username} and  userpass= #{userpass}
+
+   </select>
+
+
+    <select id="usertb" parameterType="tbUser" resultType="tbUser">
+      select u.USERID ,u.USERNAME ,u.REGTIME ,u.UPLOADNUM ,u.DOWNLOADNUM ,u.INTEGRAL,s.STATENAME
+      from tb_user u,tb_state s
+      <where>u.STATEIDD=s.STATEID
+            <if test="username != null and username != ''">
+                AND u.username LIKE #{username}
+            </if>
+      </where>
+      limit #{page},5
+   </select>
+
+
+    <select id="userzong" parameterType="tbUser" resultType="tbUser">
+      select u.USERID ,u.USERNAME ,u.REGTIME ,u.UPLOADNUM ,u.DOWNLOADNUM ,u.INTEGRAL,s.STATENAME
+      from tb_user u,tb_state s
+        <where>u.STATEIDD=s.STATEID</where>
+
+    </select>
+
+
+    <insert id="adduser" parameterType="tbUser" >
+     insert into tb_user (username,userpass,regtime,uploadnum,downloadnum,integral,stateidd,EDUCATION,occupation,phone,email,sex)
+     values (#{username},123,#{regtime},0,0,0,1,#{education},#{occupation},#{phone},#{email},#{sex})
+    </insert>
+
+    <delete id="deuser" parameterType="tbUser" >
+           delete from tb_user where USERID=#{userid}
+    </delete>
+
+
+    <update id="modify" parameterType="tbUser" >
+          update tb_user
+        set STATEIDD='2' where USERID=#{userid}
+
+    </update>
+
+    <select id="dynamicmenu" resultMap="Menu">
+        select  a.menuid,a.menuname,b.menuname towmenuname,b.menupath
+         from tb_menu a,tb_menu b
+         where a.menuid=b.secondaryid
+    </select>
+
+    <select id="Inquirerole" resultType="Role">
+        select  *
+         from tb_role
+
+    </select>
+
+    <resultMap id="Power" type="Power">
+        <id column="id" property="id"/>
+        <collection property="children" column="id" select="Tree2"/>
+    </resultMap>
+
+
+    <select id="Tree" resultMap="Power">
+           select menuid id,menuname title
+           from tb_menu
+           where secondaryid='' or secondaryid is null
+    </select>
+    <select id="Tree2" resultType="Power">
+          select menuid id,menuname title
+           from tb_menu
+           where secondaryid=#{id}
+    </select>
+
+    <insert id="distribution">
+        insert into tb_rm
+        ( roleid,menuid )
+         values
+         <foreach collection="List" index="index" item="id" separator=",">
+             (#{roleid},#{id})
+         </foreach>
+    </insert>
+
+    <insert id="dayinfo">
+           insert into  tb_log
+           (operatingtime,operationtype,information)
+            values
+            (#{operatingtime},#{operationtype},#{information})
+
+    </insert>
+
+
+
+    <select id="filetiao" parameterType="filetb" resultType="filetb">
+       select *
+       from tb_file
+        <where>filetype=filetype
+            <if test="filetitle != null and filetitle != ''">
+                AND filetitle LIKE #{filetitle}
+            </if>
+        </where>
+        limit #{page},5
+    </select>
+
+
+    <select id="filezong" parameterType="filetb" resultType="filetb">
+        select *
+        from tb_file
+    </select>
+
+
+
+</mapper>
